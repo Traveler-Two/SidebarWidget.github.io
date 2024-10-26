@@ -4,8 +4,8 @@
     // 创建容器
     const container = document.createElement('div');
     container.style.position = 'fixed';
+    container.style.left = 'calc(100% - 80px)'; // 默认位置在窗口右侧
     container.style.top = '50%';
-    container.style.right = '20px';
     container.style.transform = 'translateY(-50%)';
     container.style.width = '60px';
     container.style.height = '330px';
@@ -16,7 +16,7 @@
     container.style.borderRadius = '10px';
     container.style.overflow = 'hidden';
     container.style.transition = 'height 0.3s ease';
-    container.style.zIndex = '1000';
+    container.style.zIndex = '9999999999'; // 置顶
 
     // 创建五个格子
     const links = [
@@ -117,6 +117,60 @@
 
     container.appendChild(toggleButton);
 
+    // 拖动功能
+    let isDragging = false;
+    let offsetX, offsetY;
+    let wasDragging = false; // 新增标志位
+    let startX, startY; // 记录拖动的初始位置
+
+    container.addEventListener('mousedown', startDrag, false);
+    document.addEventListener('mousemove', doDrag, false);
+    document.addEventListener('mouseup', stopDrag, false);
+
+    function startDrag(e) {
+        isDragging = true;
+        wasDragging = true; // 标记开始拖动
+        offsetX = e.clientX - container.offsetLeft;
+        offsetY = e.clientY - container.offsetTop;
+        startX = e.clientX;
+        startY = e.clientY;
+        document.onselectstart = function () { return false; }; // 禁止选择
+    }
+
+    function doDrag(e) {
+        if (!isDragging) return;
+        container.style.left = `${e.clientX - offsetX}px`;
+        container.style.top = `${e.clientY - offsetY}px`;
+    }
+
+    function stopDrag(e) {
+        isDragging = false;
+        const deltaX = Math.abs(e.clientX - startX);
+        const deltaY = Math.abs(e.clientY - startY);
+
+        // 判断位移是否超过阈值（5px）
+        if (deltaX > 5 || deltaY > 5) {
+            wasDragging = true;
+        } else {
+            wasDragging = false;
+        }
+        document.onselectstart = null;
+    }
+
+    // 阻止点击事件传播
+    function preventClickDuringDrag(e) {
+        if (wasDragging) {
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            e.preventDefault();
+        }
+    }
+
+    // 给所有可能触发点击事件的元素添加事件监听器
+    container.querySelectorAll('*').forEach(el => {
+        el.addEventListener('click', preventClickDuringDrag, { capture: true });
+    });
+
     // 弹窗函数
     function showModal() {
         const modal = document.createElement('div');
@@ -125,7 +179,7 @@
         modal.style.justifyContent = 'center';
         modal.style.alignItems = 'center';
         modal.style.position = 'fixed';
-        modal.style.zIndex = '1000';
+        modal.style.zIndex = '10000';
         modal.style.left = '0';
         modal.style.top = '0';
         modal.style.width = '100%';
@@ -143,9 +197,8 @@
         modalContent.style.maxWidth = '600px';
         modalContent.style.display = 'flex';
         modalContent.style.flexDirection = 'column';
-        modalContent.style.alignItems = 'flex-start'; // 默认左对齐
+        modalContent.style.alignItems = 'flex-start';
 
-        // 在HTML字符串中定义模态窗口内容及关闭按钮
         modalContent.innerHTML = `
             <h2>联系我们</h2>
             <p style="margin-bottom: 10px; line-height: 1;">以下是我们提供的联系方式：</p>
@@ -156,38 +209,22 @@
             <p style="margin-bottom: 10px; line-height: 1;">公众号二维码：</p>
             <div class="image-container-wrapper">
                 <div class="image-container">
-                    <img src="https://traveler-two.github.io/SidebarWidget.io/HduQrCode.jpg" alt="公众号二维码" class="contact-image">
+                    <img src="https://traveler-two.github.io/SidebarWidget.io/HduQrCode.jpg" alt="公众号二维码" style="width: 150px;">
                 </div>
             </div>
-            <button class="close-button" style="position: absolute; top: 10px; right: 10px; padding: 5px 10px; border: none; background-color: transparent; font-size: 24px; cursor: pointer;">×</button>
+            <button style="align-self: center; margin-top: 20px; padding: 8px 16px;" id="closeModalButton">关闭</button>
         `;
-
-        // 获取关闭按钮元素并添加点击事件
-        const closeButton = modalContent.querySelector('.close-button');
-        closeButton.addEventListener('click', () => {
-            modal.remove();
-        });
-
-        // 设置图片样式
-        const imageContainerWrapper = modalContent.querySelector('.image-container-wrapper');
-        imageContainerWrapper.style.display = 'block'; 
-        const imageContainer = imageContainerWrapper.querySelector('.image-container');
-        imageContainer.style.display = 'block'; 
-        imageContainer.style.width = '30%'; // 设置宽度为模态框宽度的 30%
-
-        const contactImage = imageContainer.querySelector('.contact-image');
-        contactImage.style.maxWidth = '100%'; // 图片最大宽度为容器宽度
-        contactImage.style.minWidth = '150px'; // 设置最小宽度
-        contactImage.style.height = 'auto'; // 自动调整高度以保持比例
-
-        // 加载完成后检查图片尺寸
-        contactImage.onload = function() {
-            console.log('Image dimensions:', this.width, this.height);
-        };
 
         modal.appendChild(modalContent);
         document.body.appendChild(modal);
+
+        const closeModalButton = modal.querySelector('#closeModalButton');
+        closeModalButton.onclick = function () {
+            document.body.removeChild(modal);
+        };
     }
 
+    // 插入到页面
     document.body.appendChild(container);
+
 })();
