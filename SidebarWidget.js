@@ -92,7 +92,7 @@
     let isCollapsed = false;
     toggleButton.addEventListener('click', () => {
         if (isCollapsed) {
-            container.style.height = '330px';
+            container.style.height = '270px';
             toggleButton.textContent = '▲';
             boxes.forEach(box => box.style.display = 'block');
         } else {
