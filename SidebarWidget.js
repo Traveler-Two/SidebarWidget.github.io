@@ -8,7 +8,7 @@
     container.style.top = '50%';
     container.style.transform = 'translateY(-50%)';
     container.style.width = '60px';
-    container.style.height = '330px';
+    container.style.height = '270px';
     container.style.backgroundColor = '#007BFF';
     container.style.display = 'flex';
     container.style.flexDirection = 'column';
@@ -16,13 +16,13 @@
     container.style.borderRadius = '10px';
     container.style.overflow = 'hidden';
     container.style.transition = 'height 0.3s ease';
-    container.style.zIndex = '10000'; // 置顶
+    container.style.zIndex = '9999999999'; // 置顶
 
     // 创建三个格子
     const links = [
         { text: '每日一练', url: 'https://yskj.cjrh.sebri.cn/gather/4/exam/daily/do', icon: '📖' },
-        { text: '每周一测', url: 'https://yskj.cjrh.sebri.cn/gather/3/exam/weekly/do', icon: '📝' },
-        { text: '每月一考', url: 'https://yskj.cjrh.sebri.cn/gather/3/exam/monthly/do', icon: '📅' }
+        { text: '每周一测', url: 'https://yskj.cjrh.sebri.cn/gather/3/exam/monthly/do', icon: '📝' },
+        { text: '每月一考', url: 'https://yskj.cjrh.sebri.cn/gather/3/exam/weekly/do', icon: '📅' },
     ];
 
     const boxes = links.map(link => {
@@ -41,6 +41,7 @@
         contentWrapper.style.display = 'flex';
         contentWrapper.style.flexDirection = 'column';
         contentWrapper.style.alignItems = 'center';
+        contentWrapper.style.justifyContent = 'center';
 
         // 添加图标
         const icon = document.createElement('div');
@@ -59,9 +60,11 @@
         box.appendChild(contentWrapper);
 
         // 点击跳转
-        box.addEventListener('click', () => {
-            window.location.href = link.url;
-        });
+        if (link.url) {
+            box.addEventListener('click', () => {
+                window.location.href = link.url;
+            });
+        }
 
         return box;
     });
@@ -112,6 +115,7 @@
     let isDragging = false;
     let offsetX, offsetY;
     let wasDragging = false; // 新增标志位
+    let startX, startY; // 记录拖动的初始位置
 
     container.addEventListener('mousedown', startDrag, false);
     document.addEventListener('mousemove', doDrag, false);
@@ -122,6 +126,8 @@
         wasDragging = true; // 标记开始拖动
         offsetX = e.clientX - container.offsetLeft;
         offsetY = e.clientY - container.offsetTop;
+        startX = e.clientX;
+        startY = e.clientY;
         document.onselectstart = function () { return false; }; // 禁止选择
     }
 
@@ -131,88 +137,35 @@
         container.style.top = `${e.clientY - offsetY}px`;
     }
 
-    function stopDrag() {
+    function stopDrag(e) {
         isDragging = false;
-        wasDragging = false; // 标记停止拖动
-        document.onselectstart = null; // 允许选择
+        const deltaX = Math.abs(e.clientX - startX);
+        const deltaY = Math.abs(e.clientY - startY);
+
+        // 判断位移是否超过阈值（5px）
+        if (deltaX > 5 || deltaY > 5) {
+            wasDragging = true;
+        } else {
+            wasDragging = false;
+        }
+        document.onselectstart = null;
     }
 
     // 阻止点击事件传播
     function preventClickDuringDrag(e) {
         if (wasDragging) {
-            e.stopPropagation(); // 阻止事件冒泡
-            e.stopImmediatePropagation(); // 阻止同一阶段的其他监听器
-            e.preventDefault(); // 队列中阻止默认行为
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            e.preventDefault();
         }
     }
 
     // 给所有可能触发点击事件的元素添加事件监听器
     container.querySelectorAll('*').forEach(el => {
-        el.addEventListener('click', preventClickDuringDrag, { capture: true }); // 捕获阶段
+        el.addEventListener('click', preventClickDuringDrag, { capture: true });
     });
 
-    // 弹窗函数
-    function showModal() {
-        const modal = document.createElement('div');
-        modal.className = 'modal';
-        modal.style.display = 'flex';
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
-        modal.style.position = 'fixed';
-        modal.style.zIndex = '10000';
-        modal.style.left = '0';
-        modal.style.top = '0';
-        modal.style.width = '100%';
-        modal.style.height = '100%';
-        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-
-        const modalContent = document.createElement('div');
-        modalContent.className = 'modal-content';
-        modalContent.style.position = 'relative';
-        modalContent.style.backgroundColor = 'white';
-        modalContent.style.margin = 'auto';
-        modalContent.style.padding = '20px';
-        modalContent.style.borderRadius = '10px';
-        modalContent.style.width = '50%';
-        modalContent.style.maxWidth = '600px';
-        modalContent.style.display = 'flex';
-        modalContent.style.flexDirection = 'column';
-        modalContent.style.alignItems = 'flex-start'; // 默认左对齐
-
-        // 在HTML字符串中定义模态窗口内容及关闭按钮
-        modalContent.innerHTML = `        
-            <h2 style="margin: 0; font-size: 28px;">联系我们</h2>
-            <p style="margin-bottom: 10px; line-height: 1;">以下是我们提供的联系方式：</p>
-            <p style="margin-bottom: 10px; line-height: 1;">侯老师：13777856668&nbsp;&nbsp;18969176668&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;李经理：18958129088</p>
-            <p style="margin-bottom: 10px; line-height: 1;">传真：0571-86904592&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邮编：310018</p>
-            <p style="margin-bottom: 10px; line-height: 1;">Email：yskjxs@163.com</p>
-            <p style="margin-bottom: 10px; line-height: 1;">地址：浙江省杭州市下沙3号大街8号路口和达创意园5号楼6楼602、604、606室</p>
-            <p style="margin-bottom: 10px; line-height: 1;">公众号二维码：</p>
-            <div class="image-container-wrapper">
-                <div class="image-container">
-                    <img src="https://traveler-two.github.io/SidebarWidget.io/HduQrCode.jpg" alt="公众号二维码" class="contact-image">
-                </div>
-            </div>
-        `;
-
-        // 右上角的关闭按钮
-        const closeButton = document.createElement('span');
-        closeButton.style.position = 'absolute';
-        closeButton.style.top = '10px';
-        closeButton.style.right = '10px';
-        closeButton.style.cursor = 'pointer';
-        closeButton.style.fontSize = '28px'; // 调整字体大小
-        closeButton.style.color = 'black';
-        closeButton.textContent = '×';
-
-        closeButton.onclick = function () {
-            document.body.removeChild(modal);
-        };
-
-        modalContent.appendChild(closeButton); // 将关闭按钮添加到模态窗口内容中
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
-    }
-
+    // 插入到页面
     document.body.appendChild(container);
+
 })();
