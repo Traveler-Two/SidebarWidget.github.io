@@ -156,7 +156,7 @@
             <p style="margin-bottom: 10px; line-height: 1;">公众号二维码：</p>
             <div class="image-container-wrapper">
                 <div class="image-container">
-                    <img src="https://img.picui.cn/free/2024/10/23/6718cf53a1ec9.jpg" alt="公众号二维码" class="contact-image">
+                    <img src="https://traveler-two.github.io/SidebarWidget.io/HduQrCode.jpg" alt="公众号二维码" class="contact-image">
                 </div>
             </div>
             <button class="close-button" style="position: absolute; top: 10px; right: 10px; padding: 5px 10px; border: none; background-color: transparent; font-size: 24px; cursor: pointer;">×</button>
