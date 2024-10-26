@@ -21,8 +21,8 @@
     // 创建三个格子
     const links = [
         { text: '每日一练', url: 'https://yskj.cjrh.sebri.cn/gather/4/exam/daily/do', icon: '📖' },
-        { text: '每周一测', url: 'https://yskj.cjrh.sebri.cn/gather/3/exam/monthly/do', icon: '📝' },
-        { text: '每月一考', url: 'https://yskj.cjrh.sebri.cn/gather/3/exam/weekly/do', icon: '📅' },
+        { text: '每周一测', url: 'https://yskj.cjrh.sebri.cn/gather/3/exam/weekly/do', icon: '📝' },
+        { text: '每月一考', url: 'https://yskj.cjrh.sebri.cn/gather/3/exam/monthly/do', icon: '📅' },
     ];
 
     const boxes = links.map(link => {
