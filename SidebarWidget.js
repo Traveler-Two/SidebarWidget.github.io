@@ -16,7 +16,7 @@
     container.style.borderRadius = '10px';
     container.style.overflow = 'hidden';
     container.style.transition = 'height 0.3s ease';
-    container.style.zIndex = '9999999999'; // 置顶
+    container.style.zIndex = '10000'; // 置顶
 
     // 创建五个格子
     const links = [
@@ -212,16 +212,25 @@
                     <img src="https://traveler-two.github.io/SidebarWidget.io/HduQrCode.jpg" alt="公众号二维码" style="width: 150px;">
                 </div>
             </div>
-            <button style="align-self: center; margin-top: 20px; padding: 8px 16px;" id="closeModalButton">关闭</button>
         `;
 
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
-
-        const closeModalButton = modal.querySelector('#closeModalButton');
-        closeModalButton.onclick = function () {
+        // 右上角的关闭按钮
+        const closeButton = document.createElement('span');
+        closeButton.style.position = 'absolute';
+        closeButton.style.top = '5px';
+        closeButton.style.right = '15px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.style.fontSize = '35px';
+        closeButton.style.color = 'black';
+        closeButton.textContent = '×';
+        
+        closeButton.onclick = function () {
             document.body.removeChild(modal);
         };
+
+        modalContent.appendChild(closeButton);
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
     }
 
     // 插入到页面
