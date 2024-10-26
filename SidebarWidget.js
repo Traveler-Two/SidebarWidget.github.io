@@ -32,7 +32,7 @@
         box.style.display = 'flex';
         box.style.flexDirection = 'column';
         box.style.alignItems = 'center';
-        box.style.justifyContent = 'center';
+        box.style.justifyContent = 'center'; // 确保垂直居中
         box.style.color = 'white';
         box.style.cursor = 'pointer';
 
@@ -41,7 +41,8 @@
         contentWrapper.style.display = 'flex';
         contentWrapper.style.flexDirection = 'column';
         contentWrapper.style.alignItems = 'center';
-        contentWrapper.style.justifyContent = 'center';
+        contentWrapper.style.justifyContent = 'center'; // 确保垂直居中
+        contentWrapper.style.height = '100%'; 
 
         // 添加图标
         const icon = document.createElement('div');
@@ -92,9 +93,14 @@
     let isCollapsed = false;
     toggleButton.addEventListener('click', () => {
         if (isCollapsed) {
-            container.style.height = '270px';
+            container.style.height = '270px'; // 恢复原始高度
             toggleButton.textContent = '▲';
-            boxes.forEach(box => box.style.display = 'block');
+            boxes.forEach(box => {
+                box.style.display = 'block';
+                box.style.flex = '1';
+                box.style.alignItems = 'center';
+                box.style.justifyContent = 'center';
+            });
         } else {
             container.style.height = '96px';
             toggleButton.textContent = '▼';
